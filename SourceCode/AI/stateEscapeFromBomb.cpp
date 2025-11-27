@@ -26,8 +26,6 @@ void StateEscapeFromBomb::update()
 
 void StateEscapeFromBomb::moveToSafeSpot()
 {
-void StateEscapeFromBomb::moveToSafeSpot()
-{
 	vector<vector<bool>> visited(board.getMaxY(), std::vector<bool>(board.getMaxX(), false));
 	// pair<이동거리, 폭발까지 남은 최소시간>, pair<최초 방향, 탐색에 필요한 좌표>
 	queue<pair<pair<int, double>, pair<Direction, Position>>> posQ;
@@ -114,5 +112,6 @@ void StateEscapeFromBomb::moveToSafeSpot()
 	if (bestRisk != 0)
 		enemy.move(bestDir);
 }
+
 
 
