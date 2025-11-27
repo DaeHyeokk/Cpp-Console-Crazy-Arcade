@@ -26,13 +26,15 @@ void StateEscapeFromBomb::update()
 
 void StateEscapeFromBomb::moveToSafeSpot()
 {
+void StateEscapeFromBomb::moveToSafeSpot()
+{
 	vector<vector<bool>> visited(board.getMaxY(), std::vector<bool>(board.getMaxX(), false));
-	// pair<ÀÌµ¿°Å¸®, Æø¹ß±îÁö ³²Àº ÃÖ¼Ò½Ã°£>, pair<ÃÖÃÊ ¹æÇâ, Å½»ö¿¡ ÇÊ¿äÇÑ ÁÂÇ¥>
+	// pair<ì´ë™ê±°ë¦¬, í­ë°œê¹Œì§€ ë‚¨ì€ ìµœì†Œì‹œê°„>, pair<ìµœì´ˆ ë°©í–¥, íƒìƒ‰ì— í•„ìš”í•œ ì¢Œí‘œ>
 	queue<pair<pair<int, double>, pair<Direction, Position>>> posQ;
 	Position startPos = enemy.getPosition();
 	visited[startPos.y][startPos.x] = true;
 
-	// ¹æÇâÀ» ·£´ıÇÏ°Ô ¼¯±â
+	// ë°©í–¥ì„ ëœë¤í•˜ê²Œ ì„ê¸°
 	vector<Direction> directions = getShuffledDirections();
 
 	for (Direction dirIndex : directions)
@@ -49,7 +51,7 @@ void StateEscapeFromBomb::moveToSafeSpot()
 
 				if (enemy.getDangerMapValue(next.y, next.x) == SAFE_RISK)
 				{
-					// ¹Ù·Î ÇÑÄ­ ¿·¿¡ ¾ÈÀüÇÑ À§Ä¡°¡ ÀÖÀ¸¸é ¹Ù·Î ÀÌµ¿
+					// ë°”ë¡œ í•œì¹¸ ì˜†ì— ì•ˆì „í•œ ìœ„ì¹˜ê°€ ìˆìœ¼ë©´ ë°”ë¡œ ì´ë™
 					enemy.move(dirIndex);
 					return;
 				}
@@ -69,12 +71,15 @@ void StateEscapeFromBomb::moveToSafeSpot()
 		double moveDelay = enemy.getMoveDelay();
 		posQ.pop();
 
-		// ÇöÀç À§Ä¡°¡ ¾ÈÀüÇÑ ÁÂÇ¥¶ó¸é ÇØ´ç ÁÂÇ¥¸¦ ÇâÇØ ÀÌµ¿
+		// í˜„ì¬ ìœ„ì¹˜ê°€ ì•ˆì „í•œ ì¢Œí‘œë¼ë©´ í•´ë‹¹ ì¢Œí‘œê¹Œì§€ ì´ë™ ê°€ëŠ¥í•œì§€ í™•ì¸
 		if (enemy.getDangerMapValue(pos.y, pos.x) >= SAFE_BOMB_TIME)
 		{
-			// (ÀÌµ¿ µô·¹ÀÌ * ¸ñÀûÁö±îÁö Ä­¼ö)±îÁöÀÇ ½Ã°£ÀÌ Æø¹ß ³²Àº ½Ã°£º¸´Ù Âª´Ù¸é ÇØ´ç ÁÂÇ¥·Î ÀÌµ¿ÇÑ´Ù
-			if (moveDelay * depth < explodeRemainTime - RISK_BUFFER)
+			// (ì´ë™ ë”œë ˆì´ * ëª©ì ì§€ê¹Œì§€ ì¹¸ìˆ˜)ê¹Œì§€ì˜ ì‹œê°„ì´ í­ë°œ ë‚¨ì€ ì‹œê°„ë³´ë‹¤ ì§§ë‹¤ë©´ 
+			// í•´ë‹¹ ê²½ë¡œì™€ í˜„ì¬ê¹Œì§€ ë°œê²¬í•œ ê°€ì¥ ì•ˆì „í•œ ê²½ë¡œì™€ ë¹„êµí•œë‹¤
+			if (moveDelay * depth < explodeRemainTime)
 			{
+				// ì´ì „ íƒìƒ‰ì—ì„œ ë°œê²¬í•œ ê°€ì¥ ì•ˆì „í•œ ê²½ë¡œë³´ë‹¤ ë” ì•ˆì „í•œ ê²½ë¡œë¼ë©´ 
+				// ê°€ì¥ ì•ˆì „í•œ ê²½ë¡œë¥¼ í˜„ì¬ ê²½ë¡œë¡œ ê°±ì‹ í•œë‹¤
 				double risk = explodeRemainTime - (moveDelay * depth);
 				if (bestRisk < risk)
 				{
@@ -94,7 +99,7 @@ void StateEscapeFromBomb::moveToSafeSpot()
 				if (!visited[nextPos.y][nextPos.x])
 				{
 
-					// ÀÌµ¿ÇÏ·Á´Â °÷ÀÌ ¸·Çô ÀÖÁö ¾Ê´Ù¸é ÀÌµ¿ ¸ñ·Ï¿¡ ³Ö´Â´Ù.
+					// ì´ë™í•˜ë ¤ëŠ” ê³³ì´ ë§‰í˜€ ìˆì§€ ì•Šë‹¤ë©´ ì´ë™ ëª©ë¡ì— ë„£ëŠ”ë‹¤.
 					if (!enemy.isBlockedTile(nextPos))
 					{
 						double shorterTime = min(explodeRemainTime, nextExplodeRemainTime);
@@ -109,4 +114,5 @@ void StateEscapeFromBomb::moveToSafeSpot()
 	if (bestRisk != 0)
 		enemy.move(bestDir);
 }
+
 
