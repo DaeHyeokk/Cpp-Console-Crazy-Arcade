@@ -94,7 +94,7 @@ vector<GameObject*> Board::getObject(Position position)
 	vector<GameObject*> retObjects;
 	for (auto& object : objects)
 	{
-		// ¿ÀºêÁ§Æ®°¡ Á¸ÀçÇÑ´Ù¸é
+		// ì˜¤ë¸Œì íŠ¸ê°€ ì¡´ì¬í•œë‹¤ë©´
 		if (object)
 		{
 			if (object->getPosition() == position)
@@ -117,7 +117,7 @@ std::vector<GameObject*> Board::getAllObject()
 	return allObject;
 }
 
-// unique_ptr À» ¹Ş¾Æ°£´Ù´Â °ÍÀº ÇØ´ç °´Ã¼ÀÇ ¼ÒÀ¯±ÇÀ» ÀÌµ¿½ÃÅ³ ¸ñÀûÀÌ¶ó´Â °ÍÀÌ ¸íÈ®ÇÔ.
+// unique_ptr ì„ ë°›ì•„ê°„ë‹¤ëŠ” ê²ƒì€ í•´ë‹¹ ê°ì²´ì˜ ì†Œìœ ê¶Œì„ ì´ë™ì‹œí‚¬ ëª©ì ì´ë¼ëŠ” ê²ƒì´ ëª…í™•í•¨.
 unique_ptr<GameObject> Board::getObjectUniquePtr(GameObject* gameObj)
 {
 	for(auto& object : objects)
@@ -155,16 +155,16 @@ void Board::setErasePosition(Position erasePos)
 
 void Board::updateBoard()
 {
-	vector<Enemy*> enemies;
+	vector<GameObject*> enemies;
 
 	for (const auto& object : objects)
 		if (object)
 		{
-			// Enemy °´Ã¼´Â ¾÷µ¥ÀÌÆ®°¡ ¸ğµÎ ¼öÇàµÈ ´ÙÀ½ ÆøÅºÀÇ ¹üÀ§¸¦ °è»êÇØ¾ß ÇÏ´Â ·ÎÁ÷ÀÌ ÀÖ±â ¶§¹®¿¡
-			// Update °¡Àå ¸¶Áö¸·¿¡ ¼öÇàÇØ¾ßÇÔ
+			// Enemy ê°ì²´ëŠ” ì—…ë°ì´íŠ¸ê°€ ëª¨ë‘ ìˆ˜í–‰ëœ ë‹¤ìŒ í­íƒ„ì˜ ë²”ìœ„ë¥¼ ê³„ì‚°í•´ì•¼ í•˜ëŠ” ë¡œì§ì´ ìˆê¸° ë•Œë¬¸ì—
+			// Update ê°€ì¥ ë§ˆì§€ë§‰ì— ìˆ˜í–‰í•´ì•¼í•¨
 			if (object->getType() == ObjectType::ENEMY)
 			{
-				enemies.push_back(dynamic_cast<Enemy*>(object.get()));
+				enemies.push_back(object.get());
 				continue;
 			}
 			object->update();
@@ -173,7 +173,7 @@ void Board::updateBoard()
 	for (const auto& enemy : enemies)
 		enemy->update();
 
-	// ¾÷µ¥ÀÌÆ® ¼öÇà ÀÌÈÄ ÆÄ±«µÉ ¿ÀºêÁ§Æ® È®ÀÎ. -> ´ÊÀº ÇØÁ¦
+	// ì—…ë°ì´íŠ¸ ìˆ˜í–‰ ì´í›„ íŒŒê´´ë  ì˜¤ë¸Œì íŠ¸ í™•ì¸. -> ëŠ¦ì€ í•´ì œ
 	for(auto& object: objects)
 		if (object)
 		{
@@ -185,7 +185,7 @@ void Board::updateBoard()
 				GameObject* rawPtr = object.get();
 				unique_ptr<GameObject> moveObj = move(object);
 				rawPtr->returnObject(move(moveObj));
-				// object->returnObject(move(object)); ÀÌ ÄÚµå¿Í ÀÇ¹Ì°¡ °°À½.
+				// object->returnObject(move(object)); ì´ ì½”ë“œì™€ ì˜ë¯¸ê°€ ê°™ìŒ.
 			}
 		}
 
@@ -219,23 +219,18 @@ void Board::updateObjects()
 
 void Board::drawBoard()
 {
-	// »õ·Î ±×¸®±â Àü¿¡ ÄÜ¼Ö »ó¿¡¼­ Áö¿öÁ®¾ß ÇÏ´Â ÁÂÇ¥¸¦ ¿ì¼± Áö¿ò
+	// ìƒˆë¡œ ê·¸ë¦¬ê¸° ì „ì— ì½˜ì†” ìƒì—ì„œ ì§€ì›Œì ¸ì•¼ í•˜ëŠ” ì¢Œí‘œë¥¼ ìš°ì„  ì§€ì›€
 	while (!erasePosQ.empty())
 	{
 		eraseDrawingPosition(erasePosQ.front());
 		erasePosQ.pop();
 	}
 
-	// È°¼ºÈ­ ÁßÀÎ ¿ÀºêÁ§Æ®¸¦ ±×¸².
+	// í™œì„±í™” ì¤‘ì¸ ì˜¤ë¸Œì íŠ¸ë¥¼ ê·¸ë¦¼.
 	for (const auto& object : objects)
 		if (object && object->activeSelf())
 		{
 			object->draw();
-			if (object->getType() == ObjectType::PLAYER)
-			{
-				Player* player = dynamic_cast<Player*>(object.get());
-
-			}
 		}
 }
 
@@ -254,92 +249,92 @@ void Board::eraseCharacterHaveItem()
 void Board::drawEmptyTile(Position pos)
 {
 	gotoxy(SCREEN_CENTER_XPOS + pos.x * OBJECT_SIZE_X, SCREEN_CENTER_YPOS + pos.y * OBJECT_SIZE_Y);
-	cout << "¢É";
+	cout << "â–¨";
 }
 
 void Board::drawGameInfo()
 {
 	gotoxy(62, 3);
 	setTextColor(WHITE);
-	cout << "[¾ÆÀÌÅÛ Á¾·ù]";
+	cout << "[ì•„ì´í…œ ì¢…ë¥˜]";
 
 	gotoxy(57, 5);
 	setTextColor(CursorColor::DARK_BLUE);
-	cout << "¡İ";
+	cout << "â—";
 	gotoxy(60, 5);
-	cout << "¡æ ¹°ÆøÅº °³¼ö +1";
+	cout << "â†’ ë¬¼í­íƒ„ ê°œìˆ˜ +1";
 
 	gotoxy(57, 6);
 	setTextColor(CursorColor::DARK_GRAY);
-	cout << "¡Ó";
+	cout << "âˆ‚";
 	gotoxy(60, 6);
-	cout << "¡æ ¹°ÆøÅº ÆÄ¿ö +1";
+	cout << "â†’ ë¬¼í­íƒ„ íŒŒì›Œ +1";
 
 	gotoxy(57, 7);
 	setTextColor(CursorColor::DARK_RED);
-	cout << "¢¶";
+	cout << "â€°";
 	gotoxy(60, 7);
-	cout << "¡æ ÀÌµ¿¼Óµµ +10";
+	cout << "â†’ ì´ë™ì†ë„ +10";
 
 	gotoxy(57, 8);
 	setTextColor(CursorColor::YELLOW);
-	cout << "¢Í";
+	cout << "â™¨";
 	gotoxy(60, 8);
-	cout << "¡æ ¹°ÆøÅº °³¼ö +1";
+	cout << "â†’ ë¬¼í­íƒ„ ê°œìˆ˜ +1";
 	gotoxy(63, 9);
-	cout << "¹°ÆøÅº ÆÄ¿ö +1";
+	cout << "ë¬¼í­íƒ„ íŒŒì›Œ +1";
 
 	gotoxy(57, 10);
 	setTextColor(CursorColor::DARK_SKYBLUE);
-	cout << "¡¿";
+	cout << "Ã—";
 	gotoxy(60, 10);
-	cout << "¡æ Àü¹æÀ¸·Î ´ÙÆ®¸¦ ´øÁ®";
+	cout << "â†’ ì „ë°©ìœ¼ë¡œ ë‹¤íŠ¸ë¥¼ ë˜ì ¸";
 	gotoxy(63, 11);
-	cout << "¹°ÆøÅºÀ» ÅÍ¶ß¸²";
+	cout << "ë¬¼í­íƒ„ì„ í„°ëœ¨ë¦¼";
 
 	gotoxy(57, 12);
 	setTextColor(CursorColor::WHITE);
-	cout << "¢Ö";
+	cout << "â†—";
 	gotoxy(60, 12);
-	cout << "¡æ ¹°ÆøÅº¿¡ ¸Â¾ÒÀ» ½Ã ºÎÈ°";
+	cout << "â†’ ë¬¼í­íƒ„ì— ë§ì•˜ì„ ì‹œ ë¶€í™œ";
 
 	gotoxy(7, 4);
 	setTextColor(WHITE);
 	cout << "PLAYER : ";
 	gotoxy(17, 4);
 	setTextColor(CursorColor::GREEN);
-	cout << "¡Ï";
+	cout << "â™€";
 
 	gotoxy(5, 6);
 	setTextColor(WHITE);
 	cout << "COMPUTER : ";
 	gotoxy(17, 6);
 	setTextColor(CursorColor::RED);
-	cout << "¡Ï";
+	cout << "â™€";
 
 
 	gotoxy(2, 8);
 	setTextColor(WHITE);
-	cout << "¹æÇâÅ°: ";
+	cout << "ë°©í–¥í‚¤: ";
 	gotoxy(10, 8);
-	cout << "¡è ¡ç ¡é ¡æ";
+	cout << "â†‘ â† â†“ â†’";
 	gotoxy(10, 9);
 	cout << "W  A  S  D";
 
 	gotoxy(4, 11);
-	cout << "ÆøÅº: ";
+	cout << "í­íƒ„: ";
 	gotoxy(10, 11);
 	cout << "Space bar";
 
 	gotoxy(2, 13);
-	cout << "¾ÆÀÌÅÛ: ";
+	cout << "ì•„ì´í…œ: ";
 	gotoxy(11, 13);
 	cout << "Ctrl";
 
 	gotoxy(15, 15);
 	cout << "ITEM";
 	gotoxy(13, 16);
-	cout << "¡¼    ¡½";
+	cout << "ã€    ã€‘";
 }
 
 void Board::setCursorCharacterHaveItemPosition()
@@ -380,5 +375,6 @@ GameState Board::getGameState()
 {
 	return gameState;
 }
+
 
 
