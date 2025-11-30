@@ -57,8 +57,7 @@ https://github.com/DaeHyeokk/CppConsoleCrazyArcade/releases/tag/v1.0.0
 - GameObject의 `ExplosionDamageAction()` 가상 함수 기반으로 처리
 
 ### 🔥 4. 오브젝트 풀링
-- Flame 오브젝트를 풀링하여  
-  **반복 생성/파괴 비용 최소화**
+- Flame 오브젝트를 풀링하여 **반복 생성/파괴 비용 최소화**
 
 ### 🤖 5. AI – FSM + BFS 기반 행동 로직
 - 7개 이상의 상태(State) 기반 FSM
