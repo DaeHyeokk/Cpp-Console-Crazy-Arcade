@@ -11,7 +11,7 @@ C++로 구현한 콘솔 기반 크레이지 아케이드 프로젝트입니다.
 
 📦 **실행 파일 다운로드**  
 [https://github.com/DaeHyeokk/CppConsoleCrazyArcade/releases/tag/v1.0.0](https://github.com/DaeHyeokk/Cpp-Console-Crazy-Arcade/releases/tag/v1.0.0)  
-※ 최상단 `Crazy Arcade Project.zip` 파일 다운로드
+※ 최하단 `Crazy Arcade Project.zip` 파일 다운로드
 
 ---
 
